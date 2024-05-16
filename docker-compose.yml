@@ -1,0 +1,20 @@
+version: '3.9'
+services:
+  mainnetwork:
+      image: alpine:3.14
+      command: ["tail", "-f", "/dev/null"]
+      ports:
+        - 5000:5000
+        - 11434:11434
+  ollama:
+    network_mode: service:mainnetwork
+    image: ollama/ollama
+  app:
+    network_mode: service:mainnetwork
+    image: python:3.9-slim
+    working_dir: /app
+    command: ["./start.sh"]
+    volumes:
+      - ./app:/app:delegated
+    depends_on:
+      - ollama
